@@ -10,11 +10,56 @@ import json
 from webdriver_manager.chrome import ChromeDriverManager
 # from selenium.common.exceptions import ElementClickInterceptedException
 
-start_time=time.time()
-driver = webdriver.Chrome(ChromeDriverManager().install())
 
-#Specify Search URL
-search_url = 'https://www.google.com/search?sxsrf=ALeKk00gwrM0rgs9ak8BrV8TP4OE_lHTNA%3A1608576867382&source=hp&ei=Y-_gX52HFcG9rQHox4q4Dg&q=courses+after+10th+class&oq=courses+after+10&gs_lcp=CgZwc3ktYWIQAxgCMggIABCxAxDJAzICCAAyAggAMgIIADICCAAyAggAMgIIADICCAAyAggAMgIIADoHCCMQ6gIQJzoECCMQJzoFCAAQkQI6CAgAELEDEIMBOgUIABCxAzoLCC4QsQMQxwEQowI6BAguEEM6BwgAELEDEEM6BAgAEEM6CggAELEDEIMBEEM6BwguELEDEEM6BwgAEBQQhwI6CAgAEMkDEJECOgcIIxDJAxAnOgoIABCxAxDJAxBDOgUIABDJA1CWlgNYldUDYOfmA2gFcAB4AIAB7wGIAZcWkgEGMC4xOC4ymAEAoAEBqgEHZ3dzLXdperABCg&sclient=psy-ab'
+def get_query_list(path):
 
-#get request
-driver.get(search_url)
+    '''
+        input: path of text file containing search queries
+        output: list of search queries
+    '''
+    query_file = open(path, "r")
+    test_list = query_file.readlines()
+    query_list = [x.strip() for x in test_list]
+    query_file.close()
+
+    return query_list
+
+def get_search_query(query_list):
+
+    query = query_list[0]
+    words = query.split(' ')
+    search_string = '+'.join([word for word in words])
+
+    #Specify Search URL
+    search_url = 'https://www.google.com/search?channel=fs&client=ubuntu&q={}'
+    search_query = search_url.format(search_string)
+
+    return search_query
+
+
+def get_results(search_query):
+
+    start_time=time.time()
+    driver = webdriver.Chrome(ChromeDriverManager().install())
+
+    #get request
+    driver.get(search_query)
+    time.sleep(2)
+
+    results = driver.find_elements_by_class_name('RqBzHd')
+
+    print(results)
+
+
+def main():
+
+    file_name = 'search_queries.txt'
+    search_query_list = get_query_list(file_name)
+    search_query_string = get_search_query(search_query_list)
+    get_results(search_query_string)
+
+if __name__ == "__main__":
+    main()
+    
+
+
