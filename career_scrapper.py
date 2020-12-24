@@ -44,11 +44,13 @@ def get_results(search_query):
 
     #get request
     driver.get(search_query)
-    time.sleep(2)
+    time.sleep(10)
 
+    # results = driver.find_elements_by_xpath('//*[@id="rso"]/div[1]/div/div[1]/div/div[1]/div/div[2]/div/div[2]')
     results = driver.find_elements_by_class_name('RqBzHd')
-
-    print(results)
+    for row in results:
+        print(row.text)
+    
 
 
 def main():
